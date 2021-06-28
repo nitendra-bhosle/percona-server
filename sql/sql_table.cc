@@ -3065,6 +3065,19 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
   if (rm_table_sort_into_groups(thd, &drop_ctx, tables)) return true;
 
+  if (thd->variables.binlog_ddl_query_log_events) {
+    size_t table_count = 0;
+    for (TABLE_LIST *table = tables; table; table = table->next_local) {
+      ++table_count;
+      if (table_count > 1) break;
+    }
+
+    if (table_count > 1) {
+      my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_query_log_events");
+      return true;
+    }
+  }
+
   /*
     Figure out in which situation we are regarding GTID and different
     table groups.
@@ -3351,7 +3364,17 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
       thd->thread_specific_used = true;
 
-      if (built_query.write_bin_log()) goto err_with_rollback;
+      if (thd->variables.binlog_ddl_query_log_events) {
+        if (thd->binlog_query(
+                THD::STMT_QUERY_TYPE, thd->query().str, thd->query().length,
+                drop_ctx.has_base_atomic_tables(), false /* direct */,
+                false /* suppress_use */, 0 /* errcode */)) {
+          goto err_with_rollback;
+        }
+
+      } else {
+        if (built_query.write_bin_log()) goto err_with_rollback;
+      }
 
       if (drop_ctx.has_no_gtid_single_table_group() ||
           drop_ctx.has_gtid_single_table_group()) {
