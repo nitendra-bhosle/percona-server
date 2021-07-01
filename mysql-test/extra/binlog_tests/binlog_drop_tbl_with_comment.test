@@ -33,4 +33,4 @@ DROP TABLE t,t1;
 
 DROP DATABASE test7526;
 
-source include/show_binlog_events.inc;
+--source include/show_binlog_events.inc

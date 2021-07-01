@@ -3072,6 +3072,12 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
       if (table_count > 1) break;
     }
 
+    /*
+      When 'binlog_ddl_query_log_events' option is enabled
+      logging query as is for multi table drop statements
+      are error prone if tables contain both normal tables
+      and temperary tables.Hence not supported
+    */
     if (table_count > 1) {
       my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_query_log_events");
       return true;
