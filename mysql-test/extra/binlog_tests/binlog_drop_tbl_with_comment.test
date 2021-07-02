@@ -9,17 +9,17 @@ USE test7526;
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
 
-SET binlog_ddl_query_log_events = ON;
+SET binlog_ddl_skip_rewrite = ON;
 
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
 
-SET binlog_ddl_query_log_events = OFF;
+SET binlog_ddl_skip_rewrite = OFF;
 
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
 
-SET binlog_ddl_query_log_events = ON;
+SET binlog_ddl_skip_rewrite = ON;
 
 CREATE TABLE t (a INT);
 CREATE TABLE t1 (a INT);
@@ -27,7 +27,7 @@ CREATE TABLE t1 (a INT);
 --error ER_DROP_MULTI_TABLE
 DROP TABLE t,t1;
 
-SET binlog_ddl_query_log_events = OFF;
+SET binlog_ddl_skip_rewrite = OFF;
 
 DROP TABLE t,t1;
 

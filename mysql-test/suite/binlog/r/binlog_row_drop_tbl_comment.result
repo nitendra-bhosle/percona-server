@@ -2,18 +2,18 @@ CREATE DATABASE test7526;
 USE test7526;
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
-SET binlog_ddl_query_log_events = ON;
+SET binlog_ddl_skip_rewrite = ON;
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
-SET binlog_ddl_query_log_events = OFF;
+SET binlog_ddl_skip_rewrite = OFF;
 /* comment1 */ CREATE TABLE t (a VARCHAR(100));
 /* comment1 */ DROP TABLE t;
-SET binlog_ddl_query_log_events = ON;
+SET binlog_ddl_skip_rewrite = ON;
 CREATE TABLE t (a INT);
 CREATE TABLE t1 (a INT);
 DROP TABLE t,t1;
-ERROR HY000: Multi table drop is not supported when 'binlog_ddl_query_log_events' option is enabled
-SET binlog_ddl_query_log_events = OFF;
+ERROR HY000: Multi table drop is not supported when 'binlog_ddl_skip_rewrite' option is enabled
+SET binlog_ddl_skip_rewrite = OFF;
 DROP TABLE t,t1;
 DROP DATABASE test7526;
 include/show_binlog_events.inc

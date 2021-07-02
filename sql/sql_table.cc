@@ -3065,7 +3065,7 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
   if (rm_table_sort_into_groups(thd, &drop_ctx, tables)) return true;
 
-  if (thd->variables.binlog_ddl_query_log_events) {
+  if (thd->variables.binlog_ddl_skip_rewrite) {
     size_t table_count = 0;
     for (TABLE_LIST *table = tables; table; table = table->next_local) {
       ++table_count;
@@ -3073,13 +3073,18 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
     }
 
     /*
-      When 'binlog_ddl_query_log_events' option is enabled
+      When 'binlog_ddl_skip_rewrite' option is enabled
       logging query as is for multi table drop statements
-      are error prone if tables contain both normal tables
-      and temperary tables.Hence not supported
+      does not not work as expected if tables contain both normal tables
+      and temperary tables,consider these two cases.
+      Case1: Statement's like 'drop table t1,t2' where t1 is normal table
+      but t2 is temperory table  will fail on slave while applying log.
+      Case2 : Statement's like 'DROP TABLE t1 / *!80024 ,t2 * /'
+      will generate single table or multi table drop statements
+      depending on the mysql version.
     */
     if (table_count > 1) {
-      my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_query_log_events");
+      my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_skip_rewrite");
       return true;
     }
   }
@@ -3370,7 +3375,7 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
       thd->thread_specific_used = true;
 
-      if (thd->variables.binlog_ddl_query_log_events) {
+      if (thd->variables.binlog_ddl_skip_rewrite) {
         if (thd->binlog_query(
                 THD::STMT_QUERY_TYPE, thd->query().str, thd->query().length,
                 drop_ctx.has_base_atomic_tables(), false /* direct */,

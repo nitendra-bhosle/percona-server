@@ -1608,10 +1608,10 @@ static Sys_var_bool Sys_binlog_rows_query(
     ON_CHECK(check_session_admin));
 
 static Sys_var_bool Sys_binlog_ddl_query(
-    "binlog_ddl_query_log_events",
-    "Write drop table statements having single table into binary log,"
-    "Raise error for multi table drop statements",
-    SESSION_VAR(binlog_ddl_query_log_events), CMD_LINE(OPT_ARG), DEFAULT(false),
+    "binlog_ddl_skip_rewrite",
+    "Logs the input query  into the binary log without the server rewrite."
+    "This action is useful when the server-side DDL query strips comments.",
+    SESSION_VAR(binlog_ddl_skip_rewrite), CMD_LINE(OPT_ARG), DEFAULT(false),
     NO_MUTEX_GUARD, NOT_IN_BINLOG, ON_CHECK(check_session_admin));
 
 static Sys_var_bool Sys_binlog_order_commits(
