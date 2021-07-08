@@ -101,9 +101,9 @@ The following options may be given as the first argument:
  events in the binary log. Possible values are NONE and
  CRC32; default is CRC32.
  --binlog-ddl-skip-rewrite 
- Logs the input query  into the binary log without the
- server rewrite.This action is useful when the server-side
- DDL query strips comments.
+ Without server rewrite, DDL queries will be logged with
+ comments.This action is useful when the server-side DDL
+ query strips comments.
  --binlog-direct-non-transactional-updates 
  Causes updates to non-transactional engines using
  statement format to be written directly to binary log.

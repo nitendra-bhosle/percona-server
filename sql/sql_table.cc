@@ -3074,14 +3074,14 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
     /*
       When 'binlog_ddl_skip_rewrite' option is enabled
-      logging query as is for multi table drop statements
+      logging query without rewrite
       does not not work as expected if tables contain both normal tables
-      and temperary tables,consider these two cases.
-      Case1: Statement's like 'drop table t1,t2' where t1 is normal table
-      but t2 is temperory table  will fail on slave while applying log.
-      Case2 : Statement's like 'DROP TABLE t1 / *!80024 ,t2 * /'
-      will generate single table or multi table drop statements
-      depending on the mysql version.
+      and temporary tables,consider these two cases.
+      Case1: Statements like 'drop table t1,t2' where t1 is a normal table
+      and t2 is a temporary table, will fail on the slave because temporary
+      table will not be present on the slave. Case2 : Statements like 'DROP
+      TABLE t1 / *!80024 ,t2 * /' will generate single table or multi table drop
+      statements depending on the mysql version.
     */
     if (table_count > 1) {
       my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_skip_rewrite");
