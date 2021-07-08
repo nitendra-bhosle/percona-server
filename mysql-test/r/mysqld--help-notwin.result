@@ -102,8 +102,7 @@ The following options may be given as the first argument:
  CRC32; default is CRC32.
  --binlog-ddl-skip-rewrite 
  Without server rewrite, DDL queries will be logged with
- comments.This action is useful when the server-side DDL
- query strips comments.
+ comments.
  --binlog-direct-non-transactional-updates 
  Causes updates to non-transactional engines using
  statement format to be written directly to binary log.
