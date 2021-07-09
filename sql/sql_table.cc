@@ -3065,29 +3065,6 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
   if (rm_table_sort_into_groups(thd, &drop_ctx, tables)) return true;
 
-  if (thd->variables.binlog_ddl_skip_rewrite) {
-    size_t table_count = 0;
-    for (TABLE_LIST *table = tables; table; table = table->next_local) {
-      ++table_count;
-      if (table_count > 1) break;
-    }
-
-    /*
-      When 'binlog_ddl_skip_rewrite' option is enabled logging query without
-      rewrite does not not work as expected if tables contain both normal
-      tables and temporary tables,consider these two cases.
-      Case1: Statements like 'drop table t1,t2' where t1 is a normal table
-      and t2 is a temporary table, will fail on the slave because temporary
-      table will not be present on the slave. Case2 : Statements like 'DROP
-      TABLE t1 / *!80024 ,t2 * /' will generate single table or multi table
-      drop statements depending on the mysql version.
-    */
-    if (table_count > 1) {
-      my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_skip_rewrite");
-      return true;
-    }
-  }
-
   /*
     Figure out in which situation we are regarding GTID and different
     table groups.
@@ -3374,7 +3351,9 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
       thd->thread_specific_used = true;
 
-      if (thd->variables.binlog_ddl_skip_rewrite) {
+      if (thd->variables.binlog_ddl_skip_rewrite ||
+          thd->system_thread == SYSTEM_THREAD_SLAVE_SQL ||
+          thd->system_thread == SYSTEM_THREAD_SLAVE_WORKER) {
         if (thd->binlog_query(
                 THD::STMT_QUERY_TYPE, thd->query().str, thd->query().length,
                 drop_ctx.has_base_atomic_tables(), false /* direct */,
