@@ -3353,7 +3353,8 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
 
       if (thd->variables.binlog_ddl_skip_rewrite ||
           thd->system_thread == SYSTEM_THREAD_SLAVE_SQL ||
-          thd->system_thread == SYSTEM_THREAD_SLAVE_WORKER) {
+          thd->system_thread == SYSTEM_THREAD_SLAVE_WORKER ||
+          thd->is_binlog_applier()) {
         if (thd->binlog_query(
                 THD::STMT_QUERY_TYPE, thd->query().str, thd->query().length,
                 drop_ctx.has_base_atomic_tables(), false /* direct */,
