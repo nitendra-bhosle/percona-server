@@ -3633,23 +3633,22 @@ int mysql_execute_command(THD *thd, bool first_level) {
         size_t table_count = 0;
         for (TABLE_LIST *table = all_tables; table; table = table->next_local) {
           ++table_count;
-          if (table_count > 1) break;
-        }
+          if (table_count > 1) {
+            /*
+              When 'binlog_ddl_skip_rewrite' option is enabled, logging query
+              without rewrite does not not work as expected if tables contain
+              both normal tables and temporary tables,consider these two cases.
+              Case1: Statements like 'drop table t1,t2' where t1 is a normal
+              table and t2 is a temporary table, will fail on the slave because
+              temporary table will not be present on the slave.
+              Case2 : Statements like 'DROP TABLE t1 / *!80024 ,t2 * /' will
+              generate single table or multi table drop statements depending
+              on the mysql version.
+            */
 
-        /*
-          When 'binlog_ddl_skip_rewrite' option is enabled, logging query
-          without rewrite does not not work as expected if tables contain
-          both normal tables and temporary tables,consider these two cases.
-          Case1: Statements like 'drop table t1,t2' where t1 is a normal
-          table and t2 is a temporary table, will fail on the slave because
-          temporary table will not be present on the slave.
-          Case2 : Statements like 'DROP TABLE t1 / *!80024 ,t2 * /' will
-          generate single table or multi table drop statements depending
-          on the mysql version.
-        */
-        if (table_count > 1) {
-          my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_skip_rewrite");
-          goto error;
+            my_error(ER_DROP_MULTI_TABLE, MYF(0), "binlog_ddl_skip_rewrite");
+            goto error;
+          }
         }
       }
       /* DDL and binlog write order are protected by metadata locks. */
