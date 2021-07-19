@@ -3641,7 +3641,7 @@ int mysql_execute_command(THD *thd, bool first_level) {
               Case1: Statements like 'drop table t1,t2' where t1 is a normal
               table and t2 is a temporary table, will fail on the slave because
               temporary table will not be present on the slave.
-              Case2 : Statements like 'DROP TABLE t1 / *!80024 ,t2 * /' will
+              Case2: Statements like 'DROP TABLE t1 / *!80024 ,t2 * /' will
               generate single table or multi table drop statements depending
               on the mysql version.
             */
