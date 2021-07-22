@@ -2,6 +2,10 @@ SET @session_start_value = @@session.binlog_ddl_skip_rewrite;
 SELECT @session_start_value;
 @session_start_value
 0
+SET @global_start_value = @@GLOBAL.binlog_ddl_skip_rewrite;
+SELECT @global_start_value;
+@global_start_value
+0
 SET @@session.binlog_ddl_skip_rewrite = 0;
 SET @@session.binlog_ddl_skip_rewrite = DEFAULT;
 SELECT @@session.binlog_ddl_skip_rewrite;
@@ -11,6 +15,16 @@ SET @@session.binlog_ddl_skip_rewrite = 1;
 SET @@session.binlog_ddl_skip_rewrite = DEFAULT;
 SELECT @@session.binlog_ddl_skip_rewrite;
 @@session.binlog_ddl_skip_rewrite
+0
+SET @@GLOBAL.binlog_ddl_skip_rewrite = 0;
+SET @@GLOBAL.binlog_ddl_skip_rewrite = DEFAULT;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
+@@GLOBAL.binlog_ddl_skip_rewrite
+0
+SET @@GLOBAL.binlog_ddl_skip_rewrite = 1;
+SET @@GLOBAL.binlog_ddl_skip_rewrite = DEFAULT;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
+@@GLOBAL.binlog_ddl_skip_rewrite
 0
 SET binlog_ddl_skip_rewrite = 1;
 SELECT @@binlog_ddl_skip_rewrite;
@@ -87,4 +101,8 @@ SELECT @@session.binlog_ddl_skip_rewrite;
 SET @@session.binlog_ddl_skip_rewrite = @session_start_value;
 SELECT @@session.binlog_ddl_skip_rewrite;
 @@session.binlog_ddl_skip_rewrite
+0
+SET @@GLOBAL.binlog_ddl_skip_rewrite = @global_start_value;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
+@@GLOBAL.binlog_ddl_skip_rewrite
 0

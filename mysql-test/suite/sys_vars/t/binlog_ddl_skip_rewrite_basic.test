@@ -27,13 +27,15 @@
 #                    START OF binlog_ddl_skip_rewrite TESTS            #
 ######################################################################## 
 
-
 ############################################################################## 
 #  Saving initial value of binlog_ddl_skip_rewrite in a temporary variable ###           
 ##############################################################################
 
 SET @session_start_value = @@session.binlog_ddl_skip_rewrite;
 SELECT @session_start_value;
+
+SET @global_start_value = @@GLOBAL.binlog_ddl_skip_rewrite;
+SELECT @global_start_value;
 
 ######################################################################## 
 #           Display the DEFAULT value of binlog_ddl_skip_rewrite       #
@@ -46,6 +48,15 @@ SELECT @@session.binlog_ddl_skip_rewrite;
 SET @@session.binlog_ddl_skip_rewrite = 1;
 SET @@session.binlog_ddl_skip_rewrite = DEFAULT;
 SELECT @@session.binlog_ddl_skip_rewrite;
+
+SET @@GLOBAL.binlog_ddl_skip_rewrite = 0;
+SET @@GLOBAL.binlog_ddl_skip_rewrite = DEFAULT;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
+
+SET @@GLOBAL.binlog_ddl_skip_rewrite = 1;
+SET @@GLOBAL.binlog_ddl_skip_rewrite = DEFAULT;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
+
 
 
 ############################################################################# 
@@ -102,25 +113,20 @@ SET @@session.binlog_ddl_skip_rewrite = NO;
 #     Check if the value in GLOBAL Table contains variable value        #
 #########################################################################
 
---disable_warnings
 SELECT count(VARIABLE_VALUE) FROM performance_schema.global_variables WHERE VARIABLE_NAME='binlog_ddl_skip_rewrite';
---enable_warnings
 
 ######################################################################### 
 #     Check if the value in GLOBAL Table matches value in variable      #
 #########################################################################
 
---disable_warnings
 SELECT IF(@@session.binlog_ddl_skip_rewrite, "ON", "OFF") = VARIABLE_VALUE 
 FROM performance_schema.session_variables 
 WHERE VARIABLE_NAME='binlog_ddl_skip_rewrite';
 --enable_warnings
 SELECT @@session.binlog_ddl_skip_rewrite;
---disable_warnings
 SELECT VARIABLE_VALUE 
 FROM performance_schema.session_variables 
 WHERE VARIABLE_NAME='binlog_ddl_skip_rewrite';
---enable_warnings
 
 ################################################################### 
 #        Check if ON and OFF values can be used on variable       #
@@ -146,6 +152,9 @@ SELECT @@session.binlog_ddl_skip_rewrite;
 
 SET @@session.binlog_ddl_skip_rewrite = @session_start_value;
 SELECT @@session.binlog_ddl_skip_rewrite;
+
+SET @@GLOBAL.binlog_ddl_skip_rewrite = @global_start_value;
+SELECT @@GLOBAL.binlog_ddl_skip_rewrite;
 
 ###############################################################
 #        END OF binlog_ddl_skip_rewrite TESTS                 #
