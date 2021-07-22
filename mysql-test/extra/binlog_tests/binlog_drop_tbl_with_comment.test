@@ -2,6 +2,7 @@
 # PS-7526: Unexpected quoting and dropping of comments in DROP TABLE commands
 #
 
+RESET MASTER;
 CREATE DATABASE test7526;
 
 USE test7526;
