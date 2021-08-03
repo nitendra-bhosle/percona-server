@@ -3202,7 +3202,7 @@ bool mysql_rm_table_no_locks(THD *thd, TABLE_LIST *tables, bool if_exists,
               thd->system_thread == SYSTEM_THREAD_SLAVE_WORKER ||
               thd->is_binlog_applier()) {
             if (write_bin_log(thd, true, thd->query().str, thd->query().length,
-                              drop_ctx.has_base_atomic_tables())) {
+                              false)) {
               goto err_with_rollback;
             }
 
