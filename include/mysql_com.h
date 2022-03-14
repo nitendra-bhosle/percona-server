@@ -139,6 +139,7 @@
                                            NULL by the user */
 #define CLUSTERING_FLAG (1 << 28)       /* Field has a secondary clustering
                                         key */
+#define SERIAL_FLAG (1<< 29)            /* Field is "SERIAL" */
 
 #define REFRESH_GRANT		1	/* Refresh grant tables */
 #define REFRESH_LOG		2	/* Start on new log file */
